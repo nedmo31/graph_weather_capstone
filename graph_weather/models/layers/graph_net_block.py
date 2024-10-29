@@ -13,6 +13,7 @@ from torch.utils.checkpoint import checkpoint
 from torch_geometric.nn import MetaLayer
 from torch_scatter import scatter_sum
 
+from ..layers.kan import FastKAN
 
 class MLP(nn.Module):
     """MLP for graph processing"""
@@ -111,6 +112,7 @@ class EdgeProcessor(nn.Module):
         self.edge_mlp = MLP(
             2 * in_dim_node + in_dim_edge, in_dim_edge, hidden_dim, hidden_layers, norm_type
         )
+        # self.edge_mlp = FastKAN([2 * in_dim_node + in_dim_edge, in_dim_edge])
 
     def forward(
         self, src: torch.Tensor, dest: torch.Tensor, edge_attr: torch.Tensor, u=None, batch=None
@@ -161,9 +163,10 @@ class NodeProcessor(nn.Module):
         """
 
         super(NodeProcessor, self).__init__()
-        self.node_mlp = MLP(
-            in_dim_node + in_dim_edge, in_dim_node, hidden_dim, hidden_layers, norm_type
-        )
+        # self.node_mlp = MLP(
+        #     in_dim_node + in_dim_edge, in_dim_node, hidden_dim, hidden_layers, norm_type
+        # )
+        self.node_mlp = FastKAN([in_dim_node + in_dim_edge, in_dim_node])
 
     def forward(
         self, x: torch.Tensor, edge_index: torch.Tensor, edge_attr: torch.Tensor, u=None, batch=None

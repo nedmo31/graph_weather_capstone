@@ -1,5 +1,10 @@
 """PyTorch Lightning training script for the weather forecasting model"""
 
+from pathlib import Path
+import sys
+project_root = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_root))
+
 import click
 import datasets
 import numpy as np
@@ -288,7 +293,7 @@ class GraphDataModule(pl.LightningDataModule):
                 num_proc=16,
                 writer_batch_size=2,
             )
-            .filter(lambda x: x["has_nans"])
+            #.filter(lambda x: x["has_nans"])
             .with_format("torch")
         )
 
